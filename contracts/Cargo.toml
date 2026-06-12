@@ -3,6 +3,7 @@ resolver = "2"
 
 members = [
     "policy_registry",
+    "risk_pool",
 ]
 
 [workspace.dependencies]
