@@ -4,6 +4,7 @@ resolver = "2"
 members = [
     "policy_registry",
     "risk_pool",
+    "oracle_consensus",
 ]
 
 [workspace.dependencies]
