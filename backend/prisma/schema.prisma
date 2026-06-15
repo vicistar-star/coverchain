@@ -1,0 +1,88 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum ProductType {
+  FLOOD_SHIELD
+  RIDER_GUARD
+  HARVEST_SAFE
+}
+
+enum PolicyStatus {
+  ACTIVE
+  LAPSED
+  CANCELLED
+  EXPIRED
+}
+
+enum EventType {
+  FLOOD
+  ACCIDENT
+  CROP_FAILURE
+}
+
+enum OracleStatus {
+  PENDING
+  CONSENSUS_REACHED
+  PAYOUT_TRIGGERED
+  EXPIRED
+}
+
+model User {
+  id            String   @id @default(uuid())
+  phone         String   @unique
+  stellarWallet String?
+  bvn           String?
+  nin           String?
+  kycVerified   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  policies      Policy[]
+}
+
+model Policy {
+  id              String       @id @default(uuid())
+  contractId      Int          @map("contract_policy_id")
+  productType     ProductType
+  holderAddress   String       @map("holder_address")
+  premiumAmount   Int
+  premiumInterval Int          @map("premium_interval")
+  status          PolicyStatus @default(ACTIVE)
+  totalClaimed    Int          @default(0)
+  enrolledAt      DateTime     @default(now()) @map("enrolled_at")
+  lastPremiumAt   DateTime?    @map("last_premium_at")
+  expiresAt       DateTime?    @map("expires_at")
+
+  user       User?   @relation(fields: [userId], references: [id])
+  userId     String? @map("user_id")
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([holderAddress])
+  @@index([userId])
+  @@map("policies")
+}
+
+model OracleEvent {
+  id              String       @id @default(uuid())
+  contractEventId Int          @map("contract_event_id")
+  eventType       EventType    @map("event_type")
+  locationHash    String       @map("location_hash")
+  severity        Int
+  status          OracleStatus @default(PENDING)
+  submissions     Int          @default(0)
+  consensusCount  Int          @default(0) @map("consensus_count")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  triggeredAt     DateTime?    @map("triggered_at")
+
+  @@index([eventType])
+  @@index([status])
+  @@map("oracle_events")
+}
