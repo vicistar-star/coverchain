@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import policiesRouter from "./routes/policies";
 import ussdRouter from "./routes/ussd";
+import { startPremiumScheduler } from "./services/premiumScheduler";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -23,6 +24,13 @@ app.use("/ussd", ussdRouter);
 
 app.listen(PORT, () => {
   console.log(`CoverChain backend running on port ${PORT}`);
+  if (process.env.REDIS_URL || process.env.NODE_ENV !== "test") {
+    try {
+      startPremiumScheduler();
+    } catch (err: any) {
+      console.warn(`[PremiumScheduler] Could not start (Redis unavailable?): ${err.message}`);
+    }
+  }
 });
 
 export default app;
