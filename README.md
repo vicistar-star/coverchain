@@ -1079,6 +1079,103 @@ Found a vulnerability? Please email **security@coverchain.io** before public dis
 
 ---
 
+## Contributor Onboarding
+
+This section gets you from zero to a running local environment in under 15 minutes.
+
+### 1. Clone & install
+
+```bash
+git clone https://github.com/yourorg/coverchain.git
+cd coverchain
+```
+
+### 2. Start infrastructure (PostgreSQL + Redis)
+
+```bash
+docker-compose up -d db redis
+```
+
+### 3. Build and deploy contracts to Testnet
+
+```bash
+# Install Rust + WASM target + Stellar CLI (once)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+rustup target add wasm32-unknown-unknown
+cargo install --locked stellar-cli --features opt
+
+# Generate a deployer identity and fund it
+stellar keys generate deployer --network testnet
+stellar keys fund deployer --network testnet
+
+# Build + deploy all three contracts, writes addresses to docs/contract_addresses.md
+./scripts/deploy_contracts.sh --network testnet
+```
+
+### 4. Configure environment
+
+```bash
+cp .env.example .env
+# Fill in the three CONTRACT_ID values printed by deploy_contracts.sh
+# Add ORACLE_1_SECRET_KEY, OPENWEATHER_API_KEY, etc.
+```
+
+### 5. Run backend
+
+```bash
+cd backend
+npm install
+npx prisma migrate dev --name init
+npm run dev           # http://localhost:4000
+```
+
+### 6. Run oracle service
+
+```bash
+cd oracle
+npm install
+npm run dev           # polls weather every 5 min, submits to OracleConsensus
+```
+
+### 7. Run frontend
+
+```bash
+cd frontend
+npm install
+npm run dev           # http://localhost:3000
+```
+
+### 8. Seed testnet with test data
+
+```bash
+./scripts/seed_testnet.sh
+# Creates a funded test keypair, enrolls a Flood Shield policy,
+# and submits a mock oracle event via the backend API.
+```
+
+### 9. Run all tests
+
+```bash
+cd contracts && cargo test        # Soroban unit + integration tests
+cd backend   && npm test          # Express route + service tests
+cd frontend  && npm test          # Component tests (Vitest)
+cd oracle    && npm test          # Trigger + aggregator unit tests
+```
+
+### What's ready vs. what needs work
+
+| Area | Status | Good first issues |
+|---|---|---|
+| Contracts | ✅ 90% complete | Additional event types (ACCIDENT, CROP_FAILURE) |
+| Backend API | 🏗️ 60% | `GET /policies/user/:address` (DB query), KYC route |
+| Oracle | 🏗️ 50% | `satellite.ts` NASA MODIS provider, `cropTrigger.ts` |
+| Frontend | 🏗️ 70% | Connect real backend to enrollment flow, PWA manifest |
+| Docs | ✅ Baseline | Oracle spec (`docs/oracle_spec.md`), localization |
+
+See the open issues on GitHub for tagged `good first issue` tasks.
+
+---
+
 ## Contributing
 
 We welcome contributions from the community. Please read our [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) before submitting a PR.
