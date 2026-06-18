@@ -1,6 +1,7 @@
 import { Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
+import EnrollPage from "./pages/Enroll";
 
 export default function App() {
   return (
@@ -12,11 +13,15 @@ export default function App() {
         <Link to="/dashboard" className="text-sm hover:text-brand-50">
           Dashboard
         </Link>
+        <Link to="/enroll" className="text-sm hover:text-brand-50">
+          Get Covered
+        </Link>
       </nav>
       <main className="max-w-4xl mx-auto px-4 py-8">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/enroll" element={<EnrollPage />} />
         </Routes>
       </main>
     </div>

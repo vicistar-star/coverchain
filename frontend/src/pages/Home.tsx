@@ -10,10 +10,10 @@ export default function Home() {
       </p>
       <div className="flex gap-3 flex-wrap justify-center">
         <Link
-          to="/dashboard"
+          to="/enroll"
           className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 py-3 rounded-xl transition-colors"
         >
-          Open Dashboard
+          Get Covered Now
         </Link>
         <a
           href="https://docs.coverchain.io"

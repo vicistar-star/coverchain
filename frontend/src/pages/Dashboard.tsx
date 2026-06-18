@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { useStellar } from "../hooks/useStellar";
 import PolicyCard, { PolicyData } from "../components/Dashboard/PolicyCard";
+import OracleEventFeed from "../components/shared/OracleEventFeed";
 
 // ── Mock data (replaced by real API calls once backend is running) ──────────
 
@@ -132,7 +134,15 @@ export default function Dashboard() {
 
       {/* Policies */}
       <div>
-        <h2 className="font-semibold text-gray-700 mb-3">Your Policies</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-semibold text-gray-700">Your Policies</h2>
+          <Link
+            to="/enroll"
+            className="text-sm bg-brand-500 hover:bg-brand-600 text-white px-4 py-1.5 rounded-lg transition-colors"
+          >
+            + Get Covered
+          </Link>
+        </div>
         {policies.length === 0 ? (
           <div className="bg-white rounded-2xl shadow p-8 text-center border border-gray-100">
             <p className="text-gray-400">No active policies found.</p>
@@ -151,6 +161,9 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* Oracle event feed */}
+      <OracleEventFeed />
     </div>
   );
 }
