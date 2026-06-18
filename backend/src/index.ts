@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import policiesRouter from "./routes/policies";
 import ussdRouter from "./routes/ussd";
+import oracleRouter from "./routes/oracle";
 import { startPremiumScheduler } from "./services/premiumScheduler";
 
 const app = express();
@@ -20,6 +21,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/v1/policies", policiesRouter);
+app.use("/api/v1/oracle", oracleRouter);
 app.use("/ussd", ussdRouter);
 
 app.listen(PORT, () => {
